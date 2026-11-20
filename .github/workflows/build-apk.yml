@@ -39,6 +39,8 @@ jobs:
           cat > android/app/src/main/java/com/example/decoder/MainActivity.java <<'EOF'
           package com.example.decoder;
 
+          import android.content.res.Configuration;
+          import android.graphics.Color;
           import android.os.Build;
           import android.os.Bundle;
           import android.view.WindowManager;
@@ -51,11 +53,18 @@ jobs:
             @Override
             public void onCreate(Bundle savedInstanceState) {
               super.onCreate(savedInstanceState);
+              WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
               if (Build.VERSION.SDK_INT >= 28) {
                 WindowManager.LayoutParams p = getWindow().getAttributes();
                 p.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                 getWindow().setAttributes(p);
               }
+              boolean dark = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+              int bg = Color.parseColor(dark ? "#10171c" : "#e8ecef");
+              getWindow().getDecorView().setBackgroundColor(bg);
+              getWindow().setStatusBarColor(bg);
+              getWindow().setNavigationBarColor(bg);
+              getBridge().getWebView().setBackgroundColor(bg);
               hideBars();
             }
 
