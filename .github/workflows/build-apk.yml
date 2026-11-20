@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Unzip project
+        run: unzip -o decoder-apk.zip
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -21,15 +24,17 @@ jobs:
           java-version: 17
 
       - name: Install dependencies
+        working-directory: decoder-apk
         run: npm install
 
       - name: Generate Android project
+        working-directory: decoder-apk
         run: |
           npx cap add android
           npx cap sync android
 
       - name: Build debug APK
-        working-directory: android
+        working-directory: decoder-apk/android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
@@ -38,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: decoder-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: decoder-apk/android/app/build/outputs/apk/debug/app-debug.apk
